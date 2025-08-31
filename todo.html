@@ -3,76 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Todo List</title>
+  <title>Enhanced Todo List</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 50px;
     }
+
     #todo-container {
-      max-width: 400px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      max-width: 500px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    ul {
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-weight: 300;
+      font-size: 2rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    #task-input {
+      flex: 1;
+      padding: 15px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    #task-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .add-btn:active {
+      transform: translateY(0);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    #task-list {
       list-style: none;
       padding: 0;
+      max-height: 400px;
+      overflow-y: auto;
     }
-    li {
-      padding: 8px;
-      margin: 5px 0;
-      background: #eee;
-      border-radius: 4px;
+
+    .task-item {
+      padding: 15px 20px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      animation: slideIn 0.3s ease;
     }
-    button {
-      background: red;
-      border: none;
-      color: white;
-      padding: 5px 10px;
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .task-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      margin-right: 15px;
       cursor: pointer;
-      border-radius: 4px;
+      accent-color: #667eea;
     }
-    button:hover {
-      opacity: 0.8;
+
+    .task-text {
+      flex: 1;
+      font-size: 1rem;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .task-text.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+      color: #888;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .delete-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+    }
+
+    .delete-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #888;
+      font-style: italic;
+    }
+
+    .empty-state img {
+      width: 60px;
+      height: 60px;
+      opacity: 0.3;
+      margin-bottom: 15px;
+    }
+
+    /* Scrollbar styling */
+    #task-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #task-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+
+    #task-list::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.5);
+      border-radius: 3px;
+    }
+
+    #task-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.7);
+    }
+
+    @media (max-width: 480px) {
+      #todo-container {
+        margin: 10px;
+        padding: 20px;
+      }
+      
+      .input-section {
+        flex-direction: column;
+      }
+      
+      .add-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <div id="todo-container">
-    <h2>Todo List</h2>
-    <input type="text" id="task-input" placeholder="Enter a task" />
-    <button onclick="addTask()">Add</button>
+    <h2>✅ Todo List</h2>
+    
+    <div class="stats">
+      <span>Total: <span id="total-count">0</span></span>
+      <span>Completed: <span id="completed-count">0</span></span>
+      <span>Remaining: <span id="remaining-count">0</span></span>
+    </div>
+    
+    <div class="input-section">
+      <input type="text" id="task-input" placeholder="What needs to be done?" />
+      <button class="add-btn" onclick="addTask()">Add Task</button>
+    </div>
+    
     <ul id="task-list"></ul>
+    
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
+      <p>No tasks yet. Add one above!</p>
+    </div>
   </div>
 
   <script>
+    let taskIdCounter = 0;
+    let tasks = [];
+
+    function updateStats() {
+      const totalCount = tasks.length;
+      const completedCount = tasks.filter(task => task.completed).length;
+      const remainingCount = totalCount - completedCount;
+
+      document.getElementById('total-count').textContent = totalCount;
+      document.getElementById('completed-count').textContent = completedCount;
+      document.getElementById('remaining-count').textContent = remainingCount;
+    }
+
+    function updateEmptyState() {
+      const emptyState = document.getElementById('empty-state');
+      const taskList = document.getElementById('task-list');
+      
+      if (tasks.length === 0) {
+        emptyState.style.display = 'block';
+        taskList.style.display = 'none';
+      } else {
+        emptyState.style.display = 'none';
+        taskList.style.display = 'block';
+      }
+    }
+
+    function renderTasks() {
+      const taskList = document.getElementById('task-list');
+      taskList.innerHTML = '';
+
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        li.innerHTML = `
+          <div class="task-content">
+            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
+                   onchange="toggleTask(${task.id})">
+            <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
+          </div>
+          <div class="task-actions">
+            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        `;
+        taskList.appendChild(li);
+      });
+
+      updateStats();
+      updateEmptyState();
+    }
+
     function addTask() {
-      const input = document.getElementById("task-input");
+      const input = document.getElementById('task-input');
       const taskText = input.value.trim();
 
-      if (taskText === "") return;
+      if (taskText === '') {
+        input.focus();
+        return;
+      }
 
-      const li = document.createElement("li");
-      li.textContent = taskText;
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.onclick = function () {
-        li.remove();
+      const newTask = {
+        id: ++taskIdCounter,
+        text: taskText,
+        completed: false,
+        createdAt: new Date()
       };
 
-      li.appendChild(deleteBtn);
-      document.getElementById("task-list").appendChild(li);
-
-      input.value = "";
+      tasks.push(newTask);
+      input.value = '';
+      renderTasks();
+      input.focus();
     }
+
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = !task.completed;
+        renderTasks();
+      }
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      renderTasks();
+    }
+
+    // Handle Enter key press
+    document.getElementById('task-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        addTask();
+      }
+    });
+
+    // Initialize
+    renderTasks();
+    document.getElementById('task-input').focus();
   </script>
 </body>
 </html>
